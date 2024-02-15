@@ -1,0 +1,315 @@
+{
+	"id": "8443b069-a423-4048-9f22-9267a4b6445e",
+	"name": "warehouse",
+	"timestamp": "2024-02-14T20:06:42.019Z",
+	"collection_id": "24170952-2c2eab18-9bca-4934-b521-952c0cb96a6f",
+	"folder_id": 0,
+	"environment_id": "0",
+	"totalPass": 28,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2024-02-14T20:06:39.201Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "3cd05add-c8b8-411d-8436-eb18c8337b1d",
+			"name": "Create product",
+			"url": "http://localhost:8080/product",
+			"time": 12,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response status code is 200": true,
+				"Price is a non-negative number": true,
+				"Quantity is a non-negative integer": true,
+				"Content type is application/json": true,
+				"UUID should not be empty": true,
+				"Description is a non-empty string": true,
+				"Category is a non-empty string": true,
+				"CreatedDate should not be empty": true
+			},
+			"testPassFailCounts": {
+				"Response status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Price is a non-negative number": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Quantity is a non-negative integer": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Content type is application/json": {
+					"pass": 1,
+					"fail": 0
+				},
+				"UUID should not be empty": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Description is a non-empty string": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Category is a non-empty string": {
+					"pass": 1,
+					"fail": 0
+				},
+				"CreatedDate should not be empty": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				12
+			],
+			"allTests": [
+				{
+					"Response status code is 200": true,
+					"Price is a non-negative number": true,
+					"Quantity is a non-negative integer": true,
+					"Content type is application/json": true,
+					"UUID should not be empty": true,
+					"Description is a non-empty string": true,
+					"Category is a non-empty string": true,
+					"CreatedDate should not be empty": true
+				}
+			]
+		},
+		{
+			"id": "ce5a9029-f3a2-4906-8b4b-7829d77ae5fc",
+			"name": "Get all products",
+			"url": "http://localhost:8080/product",
+			"time": 6,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response status code is 200": true,
+				"Price is a non-negative number": true,
+				"Quantity is a non-negative integer": true,
+				"Response Content-Type is application/json": true,
+				"Validate the uuid field is not empty for each product": true,
+				"Description is a non-empty string for each product": true,
+				"Category is a non-empty string for each product": true
+			},
+			"testPassFailCounts": {
+				"Response status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Price is a non-negative number": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Quantity is a non-negative integer": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response Content-Type is application/json": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Validate the uuid field is not empty for each product": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Description is a non-empty string for each product": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Category is a non-empty string for each product": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				6
+			],
+			"allTests": [
+				{
+					"Response status code is 200": true,
+					"Price is a non-negative number": true,
+					"Quantity is a non-negative integer": true,
+					"Response Content-Type is application/json": true,
+					"Validate the uuid field is not empty for each product": true,
+					"Description is a non-empty string for each product": true,
+					"Category is a non-empty string for each product": true
+				}
+			]
+		},
+		{
+			"id": "1b0594c2-ecd9-4c0b-87bd-4a05a9616c61",
+			"name": "Get product",
+			"url": "http://localhost:8080/product/81c7e846-74a4-4e8a-aae5-a426cdb79649",
+			"time": 5,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response status code is 200": true,
+				"Price should be a non-negative number": true,
+				"Quantity is a non-negative integer": true
+			},
+			"testPassFailCounts": {
+				"Response status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Price should be a non-negative number": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Quantity is a non-negative integer": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				5
+			],
+			"allTests": [
+				{
+					"Response status code is 200": true,
+					"Price should be a non-negative number": true,
+					"Quantity is a non-negative integer": true
+				}
+			]
+		},
+		{
+			"id": "405d947f-db01-41d4-aa22-76fdf2ec719c",
+			"name": "Patch product",
+			"url": "http://localhost:8080/product/81c7e846-74a4-4e8a-aae5-a426cdb79649",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response status code is 200": true,
+				"Response has the required fields": true,
+				"Price is a non-negative number": true,
+				"Quantity is a non-negative integer": true,
+				"Last Quantity Change Date Changed": true,
+				"Change lastQuantityChangeDate after change quantity": true
+			},
+			"testPassFailCounts": {
+				"Response status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response has the required fields": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Price is a non-negative number": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Quantity is a non-negative integer": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Last Quantity Change Date Changed": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Change lastQuantityChangeDate after change quantity": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response status code is 200": true,
+					"Response has the required fields": true,
+					"Price is a non-negative number": true,
+					"Quantity is a non-negative integer": true,
+					"Last Quantity Change Date Changed": true,
+					"Change lastQuantityChangeDate after change quantity": true
+				}
+			]
+		},
+		{
+			"id": "3c3c9af5-2bc5-446f-aa8d-4e159db671b9",
+			"name": "Delete product",
+			"url": "http://localhost:8080/product/81c7e846-74a4-4e8a-aae5-a426cdb79649",
+			"time": 7,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Response status code is 200": true,
+				"Response body is null": true,
+				"Validate that the product with ID '2149bc2d-5715-43e7-9295-820142e8b60b' has been successfully deleted": true,
+				"Verify that the response body is empty": true
+			},
+			"testPassFailCounts": {
+				"Response status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Response body is null": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Validate that the product with ID '2149bc2d-5715-43e7-9295-820142e8b60b' has been successfully deleted": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that the response body is empty": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				7
+			],
+			"allTests": [
+				{
+					"Response status code is 200": true,
+					"Response body is null": true,
+					"Validate that the product with ID '2149bc2d-5715-43e7-9295-820142e8b60b' has been successfully deleted": true,
+					"Verify that the response body is empty": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 37,
+	"collection": {
+		"requests": [
+			{
+				"id": "3cd05add-c8b8-411d-8436-eb18c8337b1d",
+				"method": "POST"
+			},
+			{
+				"id": "ce5a9029-f3a2-4906-8b4b-7829d77ae5fc",
+				"method": "GET"
+			},
+			{
+				"id": "1b0594c2-ecd9-4c0b-87bd-4a05a9616c61",
+				"method": "GET"
+			},
+			{
+				"id": "405d947f-db01-41d4-aa22-76fdf2ec719c",
+				"method": "PATCH"
+			},
+			{
+				"id": "3c3c9af5-2bc5-446f-aa8d-4e159db671b9",
+				"method": "DELETE"
+			}
+		]
+	}
+}
