@@ -67,7 +67,7 @@ public class ProductService {
      */
     @Transactional
     public ProductDto updateProduct(ProductDto productDto, UUID uuid) {
-        Product productFromDb = productRepository.findById(uuid)
+        Product productFromDb = productRepository.findByIdLocked(uuid)
                 .orElseThrow(() -> new ProductNotFoundException(uuid));
 
         if(productDto.getName() != null && !productDto.getName().isBlank()){
