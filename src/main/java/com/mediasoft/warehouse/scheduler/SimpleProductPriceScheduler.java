@@ -4,6 +4,7 @@ import com.mediasoft.warehouse.annotation.MeasureExecutionTime;
 import com.mediasoft.warehouse.model.Product;
 import com.mediasoft.warehouse.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,6 +22,7 @@ import java.util.List;
 @ConditionalOnProperty("app.scheduling.enabled")
 @ConditionalOnMissingBean(OptimizedProductPriceScheduler.class)
 @RequiredArgsConstructor
+@Slf4j
 public class SimpleProductPriceScheduler {
 
     private final ProductRepository productRepository;
@@ -31,7 +33,7 @@ public class SimpleProductPriceScheduler {
     @MeasureExecutionTime
     @Scheduled(fixedRateString = "${app.scheduling.period}")
     public void increasePrices() {
-        System.out.println("Start scheduling (simple)");
+        log.info("Start scheduling (simple)");
 
         List<Product> products = productRepository.findAll();
         products.forEach(product ->
@@ -42,6 +44,6 @@ public class SimpleProductPriceScheduler {
         );
         productRepository.saveAll(products);
 
-        System.out.println("End scheduling (simple)");
+        log.info("End scheduling (simple)");
     }
 }

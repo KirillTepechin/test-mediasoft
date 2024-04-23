@@ -1,5 +1,6 @@
 package com.mediasoft.warehouse.aspect;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
@@ -8,6 +9,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 @Aspect
 @Component
+@Slf4j
 public class TransactionAspect implements TransactionSynchronization {
 
     long startTime = 0;
@@ -19,12 +21,7 @@ public class TransactionAspect implements TransactionSynchronization {
     }
 
     @Override
-    public void beforeCommit(boolean readOnly) {
-        //startTime = System.currentTimeMillis();
-    }
-
-    @Override
     public void afterCommit() {
-        System.out.printf("Transaction time: %d ms%n", System.currentTimeMillis() - startTime);
+        log.info("Transaction time: {} ms", System.currentTimeMillis() - startTime);
     }
 }
