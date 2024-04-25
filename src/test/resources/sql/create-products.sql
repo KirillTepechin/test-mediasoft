@@ -1,0 +1,42 @@
+INSERT INTO public.product(
+	uuid, name, description, category, price, quantity, last_quantity_change_date, created_date)
+	VALUES (
+				random_uuid(),
+				'product1',
+				'product1',
+				1,
+				100,
+				1,
+				'2024-10-20',
+				'2024-10-20'
+		   ),
+		   (
+				random_uuid(),
+				'product2',
+				'product2',
+				1,
+				200,
+				2,
+				'2024-08-20',
+				'2024-08-20'
+		   ),
+		   (
+           		random_uuid(),
+           		'3',
+           		'3',
+           		1,
+           		100,
+           		2,
+           		'2024-08-20',
+           		'2024-08-20'
+           ),
+           (
+           		random_uuid(),
+           		'product4',
+           		'product4',
+           		1,
+           		200,
+           		2,
+           		'2024-10-20',
+           		'2024-10-20'
+           );
