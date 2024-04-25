@@ -2,8 +2,11 @@ package com.mediasoft.warehouse.controller;
 
 import com.mediasoft.warehouse.dto.ProductDto;
 import com.mediasoft.warehouse.service.ProductService;
+import com.mediasoft.warehouse.service.search.SearchCriteria;
 import com.mediasoft.warehouse.validation.ValidationMarkers;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,6 +76,12 @@ public class ProductController {
     @DeleteMapping("/{uuid}")
     public void deleteProduct(@PathVariable UUID uuid) {
         productService.deleteProduct(uuid);
+    }
+
+    @PostMapping("/search")
+    public List<ProductDto> searchProducts(Pageable pageable,
+                                           @RequestBody @Valid List<SearchCriteria<?>> searchCriteriaList) {
+        return productService.searchProducts(searchCriteriaList, pageable);
     }
 
 }

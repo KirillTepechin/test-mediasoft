@@ -2,6 +2,7 @@ package com.mediasoft.warehouse.error;
 
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import com.mediasoft.warehouse.exception.ValidationException;
+import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.stream.Collectors;
 
@@ -40,6 +42,14 @@ public class AdviceController {
         final ValidationException validationException = new ValidationException(
                 e.getBindingResult().getAllErrors().stream()
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .collect(Collectors.toSet()));
+        return new ResponseEntity<>(validationException.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<Object> handleValidationException(HandlerMethodValidationException e) {
+        final ValidationException validationException = new ValidationException(
+                e.getAllErrors().stream().map(MessageSourceResolvable::getDefaultMessage)
                         .collect(Collectors.toSet()));
         return new ResponseEntity<>(validationException.getMessage(), HttpStatus.BAD_REQUEST);
     }
