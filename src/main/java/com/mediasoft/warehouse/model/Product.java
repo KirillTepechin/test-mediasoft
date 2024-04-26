@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,11 +19,15 @@ import java.util.UUID;
 public class Product {
 
     /**
-     * Уникальный идентификатор товара (артикул)
+     * Уникальный идентификатор товара
      */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID uuid;
+
+    @Column(nullable = false, unique = true)
+    @NonNull
+    private String article;
 
     /**
      * Название товара.
@@ -57,7 +62,7 @@ public class Product {
      */
     @Column(nullable = false)
     @NonNull
-    private Integer quantity;
+    private BigDecimal quantity;
 
     /**
      * Дата последнего изменения количества.
@@ -68,15 +73,15 @@ public class Product {
     /**
      * Дата создания.
      */
-    @Column(nullable = false)
-    private LocalDateTime createdDate;
+    @Column(nullable = false, updatable = false)
+    private LocalDate createdDate;
 
     /**
      * Устанавливает дату создания и последнего изменения количества товара перед сохранением.
      */
     @PrePersist
     void setDates(){
-        this.createdDate = LocalDateTime.now();
+        this.createdDate = LocalDate.now();
         this.lastQuantityChangeDate = LocalDateTime.now();
     }
 }

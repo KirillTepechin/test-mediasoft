@@ -1,8 +1,7 @@
 package com.mediasoft.warehouse.error;
 
+import com.mediasoft.warehouse.exception.ArticleAlreadyExistsException;
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
-import com.mediasoft.warehouse.exception.ValidationException;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +9,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -25,8 +27,19 @@ public class AdviceController {
      * @return response entity
      */
     @ExceptionHandler({ProductNotFoundException.class})
-    public ResponseEntity<Object> handleNotFoundException(Throwable e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorDetails> handleNotFoundException(Throwable e) {
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                List.of(e.getMessage()), LocalDateTime.now(), className);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorDetails);
+    }
+
+    @ExceptionHandler(ArticleAlreadyExistsException.class)
+    public ResponseEntity<ErrorDetails> handleArticleAlreadyExistsException(Throwable e) {
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                List.of(e.getMessage()), LocalDateTime.now(), className);
+        return ResponseEntity.badRequest().body(errorDetails);
     }
 
     /**
@@ -36,12 +49,13 @@ public class AdviceController {
      * @return response entity
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleValidationException(MethodArgumentNotValidException e) {
-        final ValidationException validationException = new ValidationException(
-                e.getBindingResult().getAllErrors().stream()
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .collect(Collectors.toSet()));
-        return new ResponseEntity<>(validationException.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<ErrorDetails> handleValidationException(MethodArgumentNotValidException e) {
+        final List<String> errorMessages = e.getBindingResult().getFieldErrors().stream()
+                .map(fm->fm.getField() + ": " + fm.getDefaultMessage()).collect(Collectors.toList());
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                errorMessages, LocalDateTime.now(), className);
+        return ResponseEntity.badRequest().body(errorDetails);
     }
 
     /**
@@ -50,8 +64,11 @@ public class AdviceController {
      * @return response entity
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleUnknownException(Throwable e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorDetails> handleUnknownException(Throwable e) {
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                List.of(e.getMessage()), LocalDateTime.now(), className);
+        return ResponseEntity.internalServerError().body(errorDetails);
     }
 }
 

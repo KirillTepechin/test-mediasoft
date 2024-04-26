@@ -13,6 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,7 +54,7 @@ class ProductServiceTest {
         product.setDescription("Описание товара 1");
         product.setCategory(Category.ELECTRONICS);
         product.setPrice(BigDecimal.valueOf(100));
-        product.setQuantity(10);
+        product.setQuantity(BigDecimal.valueOf(10));
 
         productList.add(productRepository.save(product));
 
@@ -62,7 +64,7 @@ class ProductServiceTest {
         product.setDescription("Описание товара 2");
         product.setCategory(Category.FOOD);
         product.setPrice(BigDecimal.valueOf(1000));
-        product.setQuantity(5);
+        product.setQuantity(BigDecimal.valueOf(5));
 
         productList.add(productRepository.save(product));
 
@@ -77,11 +79,12 @@ class ProductServiceTest {
     }
 
     /**
-     * Тест для метода {@link ProductService#getAllProducts()}.
+     * Тест для метода {@link ProductService#getAllProducts(Pageable)}.
      */
     @Test
     void getAllProductTest() {
-        var productDtoListFromDb = productService.getAllProducts();
+        PageRequest pageRequest = PageRequest.of(0,10);
+        var productDtoListFromDb = productService.getAllProducts(pageRequest);
         var productDtoList = productList.stream().map(productMapper::toProductDto).toList();
         Assertions.assertIterableEquals(productDtoList, productDtoListFromDb);
     }
@@ -115,11 +118,11 @@ class ProductServiceTest {
         productDto.setDescription("Описание товара");
         productDto.setCategory(Category.ELECTRONICS);
         productDto.setPrice(BigDecimal.valueOf(100.00));
-        productDto.setQuantity(10);
+        productDto.setQuantity(BigDecimal.valueOf(10));
 
-        productDto = productService.createProduct(productDto);
+        var uuid = productService.createProduct(productDto);
 
-        Assertions.assertEquals(productDto, productService.getProductById(productDto.getUuid()));
+        Assertions.assertEquals(productDto.getUuid(), productService.getProductById(uuid).getUuid());
     }
 
     /**
@@ -144,11 +147,13 @@ class ProductServiceTest {
      */
     @Test
     void deleteProductTest() {
+        PageRequest pageRequest = PageRequest.of(0,10);
+
         productService.deleteProduct(productList.get(0).getUuid());
         //Проверяем что что-то удалилось
-        Assertions.assertEquals(1, productService.getAllProducts().size());
+        Assertions.assertEquals(1, productService.getAllProducts(pageRequest).size());
         //Проверяем что удалился правильный обьект
-        Assertions.assertNotEquals(productList.get(0), productService.getAllProducts().get(0));
+        Assertions.assertNotEquals(productList.get(0), productService.getAllProducts(pageRequest).get(0));
     }
 
 
@@ -164,7 +169,7 @@ class ProductServiceTest {
         UUID uuid = oldProduct.getUuid();
 
         ProductDto productDto = new ProductDto();
-        productDto.setQuantity(999);
+        productDto.setQuantity(BigDecimal.valueOf(999));
 
         productService.updateProduct(productDto, uuid);
         var newLocalDateTime = productService.getProductById(uuid).getLastQuantityChangeDate();
