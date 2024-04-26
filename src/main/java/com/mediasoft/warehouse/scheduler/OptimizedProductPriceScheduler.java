@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-@Profile("!dev")
+@Profile("!local")
 @ConditionalOnExpression("${app.scheduling.enabled} and ${app.scheduling.optimization}")
 @RequiredArgsConstructor
 @Slf4j

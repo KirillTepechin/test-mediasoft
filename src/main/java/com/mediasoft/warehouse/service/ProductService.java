@@ -1,11 +1,14 @@
 package com.mediasoft.warehouse.service;
 
+import com.mediasoft.warehouse.dto.GetProductDto;
 import com.mediasoft.warehouse.dto.ProductDto;
+import com.mediasoft.warehouse.exception.ArticleAlreadyExistsException;
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import com.mediasoft.warehouse.mapper.ProductMapper;
 import com.mediasoft.warehouse.model.Product;
 import com.mediasoft.warehouse.repository.ProductRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +32,9 @@ public class ProductService {
      * @return список всех товаров
      */
     @Transactional(readOnly = true)
-    public List<ProductDto> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(productMapper::toProductDto).collect(Collectors.toList());
+    public List<GetProductDto> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable).getContent().stream()
+                .map(productMapper::toGetProductDto).collect(Collectors.toList());
     }
 
     /**
@@ -41,8 +44,8 @@ public class ProductService {
      * @return товар с заданным UUID
      */
     @Transactional(readOnly = true)
-    public ProductDto getProductById(UUID uuid) {
-        return productMapper.toProductDto(productRepository.findById(uuid)
+    public GetProductDto getProductById(UUID uuid) {
+        return productMapper.toGetProductDto(productRepository.findById(uuid)
                 .orElseThrow(() -> new ProductNotFoundException(uuid)));
     }
 
@@ -53,8 +56,9 @@ public class ProductService {
      * @return созданный товар
      */
     @Transactional
-    public ProductDto createProduct(ProductDto productDto) {
-        return productMapper.toProductDto(productRepository.save(productMapper.toProduct(productDto)));
+    public UUID createProduct(ProductDto productDto) {
+        checkArticle(productDto.getArticle());
+        return productRepository.save(productMapper.toProduct(productDto)).getUuid();
     }
 
     /**
@@ -66,12 +70,15 @@ public class ProductService {
      * @throws ProductNotFoundException если товар с указанным идентификатором не найден
      */
     @Transactional
-    public ProductDto updateProduct(ProductDto productDto, UUID uuid) {
+    public UUID updateProduct(ProductDto productDto, UUID uuid) {
         Product productFromDb = productRepository.findByIdLocked(uuid)
                 .orElseThrow(() -> new ProductNotFoundException(uuid));
-
+        checkArticle(productDto.getArticle());
         if(productDto.getName() != null && !productDto.getName().isBlank()){
             productFromDb.setName(productDto.getName());
+        }
+        if(productDto.getArticle() != null && !productDto.getArticle().isBlank()){
+            productFromDb.setArticle(productDto.getArticle());
         }
         if(productDto.getDescription() != null && !productDto.getDescription().isBlank()){
             productFromDb.setDescription(productDto.getDescription());
@@ -92,7 +99,7 @@ public class ProductService {
             productFromDb.setQuantity(productDto.getQuantity());
         }
 
-        return productMapper.toProductDto(productRepository.save(productFromDb));
+        return productRepository.save(productFromDb).getUuid();
     }
 
     /**
@@ -106,5 +113,12 @@ public class ProductService {
         Product product = productRepository.findById(uuid).orElseThrow(() -> new ProductNotFoundException(uuid));
 
         productRepository.delete(product);
+    }
+
+    private void checkArticle(String article){
+        var productFromDb = productRepository.findByArticle(article);
+        if(productFromDb!=null){
+            throw new ArticleAlreadyExistsException(article);
+        }
     }
 }

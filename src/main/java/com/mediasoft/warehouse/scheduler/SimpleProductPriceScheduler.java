@@ -18,7 +18,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Component
-@Profile("!dev")
+@Profile("!local")
 @ConditionalOnProperty("app.scheduling.enabled")
 @ConditionalOnMissingBean(OptimizedProductPriceScheduler.class)
 @RequiredArgsConstructor
