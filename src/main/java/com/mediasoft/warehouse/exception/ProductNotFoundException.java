@@ -7,6 +7,6 @@ import java.util.UUID;
  */
 public class ProductNotFoundException extends RuntimeException{
     public ProductNotFoundException(UUID uuid){
-        super(String.format("Товар с артикулом %s не найден", uuid));
+        super(String.format("Товар с uuid %s не найден", uuid));
     }
 }

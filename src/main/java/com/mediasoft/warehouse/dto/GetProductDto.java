@@ -1,7 +1,6 @@
 package com.mediasoft.warehouse.dto;
 
 import com.mediasoft.warehouse.model.Category;
-import com.mediasoft.warehouse.model.Product;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -9,11 +8,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * DTO для {@link Product}.
- */
 @Data
-public class ProductDto {
+public class GetProductDto {
     /**
      * Уникальный идентификатор товара (артикул)
      */
@@ -46,7 +42,6 @@ public class ProductDto {
      * Дата последнего изменения количества.
      */
     private LocalDateTime lastQuantityChangeDate;
-
     /**
      * Дата создания.
      */
