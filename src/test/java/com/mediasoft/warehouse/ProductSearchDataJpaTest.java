@@ -3,13 +3,12 @@ package com.mediasoft.warehouse;
 import com.mediasoft.warehouse.model.Product;
 import com.mediasoft.warehouse.repository.ProductRepository;
 import com.mediasoft.warehouse.service.search.OperationType;
-import com.mediasoft.warehouse.service.search.SearchCriteria;
-import com.mediasoft.warehouse.service.search.SearchCriteria.BigDecimalSearchCriteria;
-import com.mediasoft.warehouse.service.search.SearchCriteria.DateSearchCriteria;
-import com.mediasoft.warehouse.service.search.SearchCriteria.StringSearchCriteria;
-import com.mediasoft.warehouse.service.search.SearchCriteria.IntegerSearchCriteria;
-
-import com.mediasoft.warehouse.service.search.criteria.SpecificationBuilder;
+import com.mediasoft.warehouse.service.search.SpecificationBuilder;
+import com.mediasoft.warehouse.service.search.criteria.SearchCriteria;
+import com.mediasoft.warehouse.service.search.criteria.BigDecimalSearchCriteria;
+import com.mediasoft.warehouse.service.search.criteria.DateSearchCriteria;
+import com.mediasoft.warehouse.service.search.criteria.IntegerSearchCriteria;
+import com.mediasoft.warehouse.service.search.criteria.StringSearchCriteria;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +22,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
