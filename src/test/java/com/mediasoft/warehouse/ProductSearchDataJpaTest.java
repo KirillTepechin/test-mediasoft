@@ -85,8 +85,8 @@ public class ProductSearchDataJpaTest {
                     assertTrue(product.getName().contains(nameLike));
                     assertTrue(product.getPrice().compareTo(priceGt) >= 0);
                     assertTrue(product.getPrice().compareTo(priceLt) <= 0);
-                    assertTrue(product.getCreatedDate().isAfter(localDate.atStartOfDay())
-                            || product.getCreatedDate().isEqual(localDate.atStartOfDay()));
+                    assertTrue(product.getCreatedDate().isAfter(localDate)
+                            || product.getCreatedDate().isEqual(localDate));
                 })
                 .hasSize(1);
     }

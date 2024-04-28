@@ -123,7 +123,7 @@ public class ProductService {
         var specification = specificationBuilder.getSpecification(searchCriteriaList);
 
         List<Product> result = productRepository.findAll(specification, pageable).getContent();
-        return result.stream().map(productMapper::toProductDto).toList();
+        return result.stream().map(productMapper::toGetProductDto).toList();
     }
 
     private void checkArticle(String article){
