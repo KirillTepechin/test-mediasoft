@@ -14,3 +14,8 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
     enabled: false
+currency-service:
+  mock: false
+  host: http://localhost:8081 #хост второго сервиса
+  methods:
+    get-currency: /api/v1/currencies #урл эндпоинта с курсами для GET запроса
