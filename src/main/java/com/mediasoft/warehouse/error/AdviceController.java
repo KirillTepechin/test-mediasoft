@@ -4,10 +4,12 @@ import com.mediasoft.warehouse.exception.ArticleAlreadyExistsException;
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -52,6 +54,16 @@ public class AdviceController {
     public ResponseEntity<ErrorDetails> handleValidationException(MethodArgumentNotValidException e) {
         final List<String> errorMessages = e.getBindingResult().getFieldErrors().stream()
                 .map(fm->fm.getField() + ": " + fm.getDefaultMessage()).collect(Collectors.toList());
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                errorMessages, LocalDateTime.now(), className);
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorDetails> handleValidationException(HandlerMethodValidationException e) {
+        final List<String> errorMessages = e.getAllErrors().stream()
+                .map(fm->((FieldError)fm).getField() + ": " + fm.getDefaultMessage()).collect(Collectors.toList());
         final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
         final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
                 errorMessages, LocalDateTime.now(), className);

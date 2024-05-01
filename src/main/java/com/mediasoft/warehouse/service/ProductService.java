@@ -7,6 +7,8 @@ import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import com.mediasoft.warehouse.mapper.ProductMapper;
 import com.mediasoft.warehouse.model.Product;
 import com.mediasoft.warehouse.repository.ProductRepository;
+import com.mediasoft.warehouse.service.search.criteria.SearchCriteria;
+import com.mediasoft.warehouse.service.search.SpecificationBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final SpecificationBuilder specificationBuilder;
 
     /**
      * Получить все товары.
@@ -113,6 +116,14 @@ public class ProductService {
         Product product = productRepository.findById(uuid).orElseThrow(() -> new ProductNotFoundException(uuid));
 
         productRepository.delete(product);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetProductDto> searchProducts(List<SearchCriteria<?>> searchCriteriaList, Pageable pageable) {
+        var specification = specificationBuilder.getSpecification(searchCriteriaList);
+
+        List<Product> result = productRepository.findAll(specification, pageable).getContent();
+        return result.stream().map(productMapper::toGetProductDto).toList();
     }
 
     private void checkArticle(String article){
