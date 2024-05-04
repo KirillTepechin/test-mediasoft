@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Random;
 
 @Component
-@ConditionalOnProperty("currency-service.mock")
+@ConditionalOnProperty("rest.currency-service.mock.enabled")
 @Primary
 @Slf4j
 public class CurrencyServiceClientMock implements CurrencyServiceClient{
