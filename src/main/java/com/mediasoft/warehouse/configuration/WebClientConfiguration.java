@@ -12,7 +12,7 @@ public class WebClientConfiguration {
     @Bean
     public WebClient webClient(){
         return WebClient.builder()
-                .baseUrl(restConfigurationProperties.getHost())
+                .baseUrl(restConfigurationProperties.getCurrencyService().getHost())
                 .build();
     }
 }

@@ -19,7 +19,7 @@ public class CurrencyServiceClientImpl implements CurrencyServiceClient{
     public CurrencyRates getCurrencyRates() {
         log.info("Get rates from currency service");
         return webClient.get()
-                .uri(restConfigurationProperties.getCurrenciesEndpoint())
+                .uri(restConfigurationProperties.getCurrencyService().getCurrenciesEndpoint())
                 .retrieve()
                 .bodyToMono(CurrencyRates.class)
                 .retry(2)
