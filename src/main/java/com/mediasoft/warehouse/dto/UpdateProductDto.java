@@ -1,6 +1,6 @@
 package com.mediasoft.warehouse.dto;
 
-import com.mediasoft.warehouse.model.Category;
+import com.mediasoft.warehouse.model.enums.Category;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;

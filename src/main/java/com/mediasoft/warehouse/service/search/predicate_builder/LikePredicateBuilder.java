@@ -1,6 +1,6 @@
 package com.mediasoft.warehouse.service.search.predicate_builder;
 
-import com.mediasoft.warehouse.model.Category;
+import com.mediasoft.warehouse.model.enums.Category;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;

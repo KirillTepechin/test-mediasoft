@@ -3,7 +3,7 @@ package com.mediasoft.warehouse;
 import com.mediasoft.warehouse.dto.ProductDto;
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import com.mediasoft.warehouse.mapper.ProductMapper;
-import com.mediasoft.warehouse.model.Category;
+import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.model.Product;
 import com.mediasoft.warehouse.repository.ProductRepository;
 import com.mediasoft.warehouse.service.ProductService;

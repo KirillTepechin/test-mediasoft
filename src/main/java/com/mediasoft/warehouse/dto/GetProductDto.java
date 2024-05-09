@@ -1,6 +1,6 @@
 package com.mediasoft.warehouse.dto;
 
-import com.mediasoft.warehouse.model.Category;
+import com.mediasoft.warehouse.model.enums.Category;
 import lombok.Data;
 
 import java.math.BigDecimal;
