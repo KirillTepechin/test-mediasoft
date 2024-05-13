@@ -1,12 +1,12 @@
 package com.mediasoft.warehouse.model;
 
-import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +22,9 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderProduct> orderProducts;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

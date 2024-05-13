@@ -10,7 +10,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetOrderProductDto {
-    private UUID productUuid;
+    private UUID productId;
     private String name;
     private BigDecimal quantity;
     private BigDecimal price;

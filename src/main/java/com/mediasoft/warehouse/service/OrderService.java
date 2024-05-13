@@ -5,13 +5,7 @@ import com.mediasoft.warehouse.dto.GetOrderDto;
 import com.mediasoft.warehouse.dto.GetOrderProductDto;
 import com.mediasoft.warehouse.dto.OrderProductDto;
 import com.mediasoft.warehouse.dto.OrderStatusDto;
-import com.mediasoft.warehouse.exception.CustomerNotFoundException;
-import com.mediasoft.warehouse.exception.InsufficientQuantityException;
-import com.mediasoft.warehouse.exception.OrderAccessDeniedException;
-import com.mediasoft.warehouse.exception.OrderNotFoundException;
-import com.mediasoft.warehouse.exception.OrderUnsupportedStatusException;
-import com.mediasoft.warehouse.exception.ProductNotAvailableException;
-import com.mediasoft.warehouse.exception.ProductNotFoundException;
+import com.mediasoft.warehouse.exception.*;
 import com.mediasoft.warehouse.mapper.OrderMapper;
 import com.mediasoft.warehouse.model.Customer;
 import com.mediasoft.warehouse.model.Order;
@@ -20,7 +14,6 @@ import com.mediasoft.warehouse.model.OrderProductId;
 import com.mediasoft.warehouse.model.Product;
 import com.mediasoft.warehouse.model.enums.OrderStatus;
 import com.mediasoft.warehouse.repository.CustomerRepository;
-import com.mediasoft.warehouse.repository.OrderProductRepository;
 import com.mediasoft.warehouse.repository.OrderRepository;
 import com.mediasoft.warehouse.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +21,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,7 +37,6 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
-    private final OrderProductRepository orderProductRepository;
 
     @Transactional
     public UUID createOrder(Long customerId, CreateOrderDto createOrderDto) {
@@ -48,16 +44,18 @@ public class OrderService {
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         Order order = orderRepository.save(orderMapper
-                .toOrder(createOrderDto.getDeliveryAddress(), currentCustomer));
+                .toOrder(createOrderDto.getDeliveryAddress(), currentCustomer, new ArrayList<>()));
 
         List<Product> productsFromDb = productRepository.findAllById(createOrderDto.getProducts().stream()
                 .map(OrderProductDto::getUuid).toList());
 
+        final Map<UUID, Product> productMap = productsFromDb.stream()
+                .collect(Collectors.toMap(Product::getUuid, Function.identity()));
+
         sumAndRemoveDuplicates(createOrderDto.getProducts()).forEach(product -> {
-            Product productFromDb = productsFromDb.stream()
-                    .filter(p -> p.getUuid().equals(product.getUuid()))
-                    .findFirst()
+            final Product productFromDb =  Optional.of(productMap.get(product.getUuid()))
                     .orElseThrow(() -> new ProductNotFoundException(product.getUuid()));
+
             createOrderProduct(product, productFromDb, order);
         });
 
@@ -79,19 +77,17 @@ public class OrderService {
         List<Product> productsFromDb = productRepository.findAllById(products.stream()
                 .map(OrderProductDto::getUuid).toList());
 
-        List<OrderProduct> orderProductsFromDb = orderProductRepository.findAllById(products.stream()
-                .map(product -> new OrderProductId(orderUuid, product.getUuid())).toList());
+        final Map<UUID, Product> productMap = productsFromDb.stream()
+                .collect(Collectors.toMap(Product::getUuid, Function.identity()));
+
+        final Map<OrderProductId, OrderProduct> orderProductsMap = orderFromDb.getOrderProducts()
+                .stream().collect(Collectors.toMap(OrderProduct::getId, Function.identity()));
 
         sumAndRemoveDuplicates(products).forEach(product -> {
-            Product productFromDb = productsFromDb.stream()
-                    .filter(p -> p.getUuid().equals(product.getUuid()))
-                    .findFirst()
+            final Product productFromDb =  Optional.of(productMap.get(product.getUuid()))
                     .orElseThrow(() -> new ProductNotFoundException(product.getUuid()));
 
-            orderProductsFromDb.stream()
-                    .filter(op -> op.getId().getOrderUuid().equals(orderUuid) &&
-                            op.getId().getProductUuid().equals(productFromDb.getUuid()))
-                    .findFirst()
+            Optional.ofNullable(orderProductsMap.get(new OrderProductId(orderUuid, product.getUuid())))
                     .ifPresentOrElse(op -> updateOrderProduct(product, productFromDb, op),
                             () -> createOrderProduct(product, productFromDb, orderFromDb));
         });
@@ -107,7 +103,7 @@ public class OrderService {
             throw new OrderAccessDeniedException();
         }
 
-        List<GetOrderProductDto> orderProducts = orderRepository.findOrderProductsByOrderUuid(orderUuid);
+        List<GetOrderProductDto> orderProducts = orderRepository.findOrderProductsByOrderId(orderUuid);
         BigDecimal totalPrice = orderProducts.stream()
                 .map(GetOrderProductDto::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
@@ -128,15 +124,14 @@ public class OrderService {
             throw new OrderUnsupportedStatusException();
         }
 
-        List<OrderProduct> orderProducts = orderProductRepository.findAllByOrderUuid(orderUuid);
-        List<Product> products = productRepository.findAllById(orderProducts.stream()
-                .map(orderProduct -> orderProduct.getId().getProductUuid()).toList());
+        List<OrderProduct> orderProducts = orderFromDb.getOrderProducts();
+
+        Map<UUID, Product> productMap = orderProducts.stream().map(OrderProduct::getProduct)
+                .collect(Collectors.toMap(Product::getUuid, Function.identity()));
 
         orderProducts.forEach(orderProduct -> {
-            Product product = products.stream()
-                    .filter(p -> p.getUuid().equals(orderProduct.getId().getProductUuid()))
-                    .findFirst()
-                    .orElseThrow(() -> new ProductNotFoundException(orderProduct.getId().getProductUuid()));
+            final Product product =  Optional.of(productMap.get(orderProduct.getId().getProductId()))
+                    .orElseThrow(() -> new ProductNotFoundException(orderProduct.getId().getProductId()));
             product.setQuantity(product.getQuantity().add(orderProduct.getQuantity()));
         });
     }
@@ -157,9 +152,9 @@ public class OrderService {
         checkAddingPossibility(product, productFromDb);
 
         OrderProductId orderProductId = new OrderProductId(order.getUuid(), productFromDb.getUuid());
-        OrderProduct orderProduct = new OrderProduct(orderProductId,
-                product.getQuantity(), productFromDb.getPrice().multiply(product.getQuantity()));
-        orderProductRepository.save(orderProduct);
+        OrderProduct orderProduct = new OrderProduct(orderProductId, order, productFromDb,
+                product.getQuantity(),productFromDb.getPrice().multiply(product.getQuantity()));
+        order.getOrderProducts().add(orderProduct);
         productFromDb.setQuantity(productFromDb.getQuantity().subtract(product.getQuantity()));
     }
 
