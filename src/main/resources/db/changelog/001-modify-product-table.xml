@@ -7,7 +7,7 @@
     <changeSet id="modify-product-table" author="Kirill Tepechin">
         <preConditions onFail="MARK_RAN">
             <not>
-                <columnExists tableName="products" columnName="article"/>
+                <columnExists tableName="product" columnName="article"/>
             </not>
         </preConditions>
         <addColumn tableName="product">
