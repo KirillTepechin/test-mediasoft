@@ -1,4 +1,4 @@
-package com.mediasoft.warehouse.currency;
+package com.mediasoft.warehouse.integration.currency;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

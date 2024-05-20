@@ -2,6 +2,7 @@ package com.mediasoft.warehouse.controller;
 
 import com.mediasoft.warehouse.dto.CreateOrderDto;
 import com.mediasoft.warehouse.dto.GetOrderDto;
+import com.mediasoft.warehouse.dto.OrderInfo;
 import com.mediasoft.warehouse.dto.OrderProductDto;
 import com.mediasoft.warehouse.dto.OrderStatusDto;
 import com.mediasoft.warehouse.model.enums.OrderStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -62,5 +64,10 @@ public class OrderController {
     public OrderStatus changeOrderStatus(@PathVariable UUID orderUuid,
                                   @RequestBody OrderStatusDto statusDto){
         return orderService.changeOrderStatus(orderUuid, statusDto);
+    }
+
+    @GetMapping("/active")
+    public Map<UUID, List<OrderInfo>> getActiveOrdersInfo(){
+        return orderService.getActiveOrdersInfo();
     }
 }

@@ -1,6 +1,6 @@
-package com.mediasoft.warehouse.currency.service;
+package com.mediasoft.warehouse.integration.currency.service;
 
-import com.mediasoft.warehouse.currency.CurrencyRates;
+import com.mediasoft.warehouse.integration.currency.CurrencyRates;
 import org.springframework.stereotype.Component;
 
 @Component

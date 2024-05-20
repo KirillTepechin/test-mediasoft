@@ -1,7 +1,7 @@
-package com.mediasoft.warehouse.currency.service;
+package com.mediasoft.warehouse.integration.currency.service;
 
 import com.mediasoft.warehouse.configuration.RestConfigurationProperties;
-import com.mediasoft.warehouse.currency.CurrencyRates;
+import com.mediasoft.warehouse.integration.currency.CurrencyRates;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,13 +12,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 @Slf4j
 public class CurrencyServiceClientImpl implements CurrencyServiceClient{
-    private final WebClient webClient;
+    private final WebClient currencyWebClient;
     private final RestConfigurationProperties restConfigurationProperties;
     @Override
     @Cacheable(unless = "#result == null", cacheNames = "currencyRates")
     public CurrencyRates getCurrencyRates() {
         log.info("Get rates from currency service");
-        return webClient.get()
+        return currencyWebClient.get()
                 .uri(restConfigurationProperties.getCurrencyService().getCurrenciesEndpoint())
                 .retrieve()
                 .bodyToMono(CurrencyRates.class)

@@ -1,11 +1,21 @@
 package com.mediasoft.warehouse.service;
 
 import com.mediasoft.warehouse.dto.CreateOrderDto;
+import com.mediasoft.warehouse.dto.CustomerInfo;
 import com.mediasoft.warehouse.dto.GetOrderDto;
 import com.mediasoft.warehouse.dto.GetOrderProductDto;
+import com.mediasoft.warehouse.dto.OrderInfo;
 import com.mediasoft.warehouse.dto.OrderProductDto;
 import com.mediasoft.warehouse.dto.OrderStatusDto;
-import com.mediasoft.warehouse.exception.*;
+import com.mediasoft.warehouse.exception.CustomerNotFoundException;
+import com.mediasoft.warehouse.exception.InsufficientQuantityException;
+import com.mediasoft.warehouse.exception.OrderAccessDeniedException;
+import com.mediasoft.warehouse.exception.OrderNotFoundException;
+import com.mediasoft.warehouse.exception.OrderUnsupportedStatusException;
+import com.mediasoft.warehouse.exception.ProductNotAvailableException;
+import com.mediasoft.warehouse.exception.ProductNotFoundException;
+import com.mediasoft.warehouse.integration.account.AccountServiceClient;
+import com.mediasoft.warehouse.integration.crm.CrmServiceClient;
 import com.mediasoft.warehouse.mapper.OrderMapper;
 import com.mediasoft.warehouse.model.Customer;
 import com.mediasoft.warehouse.model.Order;
@@ -27,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -37,6 +48,8 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final OrderMapper orderMapper;
     private final OrderRepository orderRepository;
+    private final AccountServiceClient accountServiceClient;
+    private final CrmServiceClient crmServiceClient;
 
     @Transactional
     public UUID createOrder(Long customerId, CreateOrderDto createOrderDto) {
@@ -146,6 +159,46 @@ public class OrderService {
                 .orElseThrow(() -> new OrderNotFoundException(orderUuid));
         orderFromDb.setStatus(statusDto.getStatus());
         return orderFromDb.getStatus();
+    }
+
+    @Transactional(readOnly = true)
+    public Map<UUID, List<OrderInfo>> getActiveOrdersInfo(){
+        List<Order> activeOrders = orderRepository.findAllByStatusIn(
+                List.of(OrderStatus.CREATED, OrderStatus.CONFIRMED)
+        );
+
+        String[] logins = activeOrders.stream().map(order -> order.getCustomer().getLogin())
+                .toArray(String[]::new);
+
+        CompletableFuture<Map<String, String>> accountNumbersByLoginsFuture = accountServiceClient.getAccountNumbersByLogins(logins);
+
+        CompletableFuture<Map<String, String>> innByLoginsFuture = crmServiceClient.getInnByLogins(logins);
+
+        Map<String, String> accountNumbersByLogins = accountNumbersByLoginsFuture.join();
+        Map<String, String> innByLogins = innByLoginsFuture.join();
+
+        List<OrderProduct> orderProducts = activeOrders.stream()
+                .flatMap(order -> order.getOrderProducts().stream()).toList();
+
+        return orderProducts.stream()
+                .collect(Collectors.groupingBy(
+                        orderProduct -> orderProduct.getProduct().getUuid(),
+                        Collectors.mapping(orderProduct -> {
+                            Order order = orderProduct.getOrder();
+                            Customer customer = order.getCustomer();
+                            return new OrderInfo(order.getUuid(),
+                                    new CustomerInfo(customer.getId(),
+                                            accountNumbersByLogins.get(customer.getLogin()),
+                                            customer.getEmail(),
+                                            innByLogins.get(customer.getLogin())
+                                    ),
+                                    order.getStatus(),
+                                    order.getDeliveryAddress(),
+                                    orderProduct.getQuantity()
+                            );
+                        }, Collectors.toList())
+                ));
+
     }
 
     private void createOrderProduct(OrderProductDto product, Product productFromDb, Order order) {
