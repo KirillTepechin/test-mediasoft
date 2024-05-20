@@ -52,7 +52,9 @@ public class OrderService {
         final Map<UUID, Product> productMap = productsFromDb.stream()
                 .collect(Collectors.toMap(Product::getUuid, Function.identity()));
 
-        sumAndRemoveDuplicates(createOrderDto.getProducts()).forEach(product -> {
+        final List<OrderProductDto> productsWithoutDuplicates = sumAndRemoveDuplicates(createOrderDto.getProducts());
+
+        productsWithoutDuplicates.forEach(product -> {
             final Product productFromDb =  Optional.of(productMap.get(product.getUuid()))
                     .orElseThrow(() -> new ProductNotFoundException(product.getUuid()));
 
@@ -83,7 +85,9 @@ public class OrderService {
         final Map<OrderProductId, OrderProduct> orderProductsMap = orderFromDb.getOrderProducts()
                 .stream().collect(Collectors.toMap(OrderProduct::getId, Function.identity()));
 
-        sumAndRemoveDuplicates(products).forEach(product -> {
+        List<OrderProductDto> productsWithoutDuplicates = sumAndRemoveDuplicates(products);
+
+        productsWithoutDuplicates.forEach(product -> {
             final Product productFromDb =  Optional.of(productMap.get(product.getUuid()))
                     .orElseThrow(() -> new ProductNotFoundException(product.getUuid()));
 
@@ -176,11 +180,12 @@ public class OrderService {
     }
 
     private List<OrderProductDto> sumAndRemoveDuplicates(List<OrderProductDto> products) {
-        return products.stream()
+        Map<UUID, BigDecimal> groupedProducts = products.stream()
                 .collect(Collectors.groupingBy(OrderProductDto::getUuid,
-                        Collectors.reducing(BigDecimal.ZERO, OrderProductDto::getQuantity, BigDecimal::add)))
-                .entrySet().stream()
+                        Collectors.reducing(BigDecimal.ZERO, OrderProductDto::getQuantity, BigDecimal::add)));
+
+        return groupedProducts.entrySet().stream()
                 .map(entry -> new OrderProductDto(entry.getKey(), entry.getValue()))
-                .toList();
+                .collect(Collectors.toList());
     }
 }
