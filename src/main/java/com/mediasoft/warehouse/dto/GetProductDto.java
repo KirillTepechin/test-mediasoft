@@ -1,7 +1,8 @@
 package com.mediasoft.warehouse.dto;
 
-import com.mediasoft.warehouse.model.Category;
+import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.currency.Currency;
+
 import lombok.Data;
 
 import java.math.BigDecimal;

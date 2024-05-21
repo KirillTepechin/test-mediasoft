@@ -1,7 +1,7 @@
 package com.mediasoft.warehouse.service.search.predicate_builder;
 
 
-import com.mediasoft.warehouse.model.Category;
+import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.service.search.criteria.BigDecimalSearchCriteria;
 import com.mediasoft.warehouse.service.search.criteria.CategorySearchCriteria;
 import com.mediasoft.warehouse.service.search.criteria.DateSearchCriteria;

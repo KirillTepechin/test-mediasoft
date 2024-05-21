@@ -1,7 +1,6 @@
 package com.mediasoft.warehouse.error;
 
-import com.mediasoft.warehouse.exception.ArticleAlreadyExistsException;
-import com.mediasoft.warehouse.exception.ProductNotFoundException;
+import com.mediasoft.warehouse.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -28,7 +27,7 @@ public class AdviceController {
      * @param e исключение
      * @return response entity
      */
-    @ExceptionHandler({ProductNotFoundException.class})
+    @ExceptionHandler({ProductNotFoundException.class, CustomerNotFoundException.class, OrderNotFoundException.class})
     public ResponseEntity<ErrorDetails> handleNotFoundException(Throwable e) {
         final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
         final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
@@ -38,6 +37,21 @@ public class AdviceController {
 
     @ExceptionHandler(ArticleAlreadyExistsException.class)
     public ResponseEntity<ErrorDetails> handleArticleAlreadyExistsException(Throwable e) {
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                List.of(e.getMessage()), LocalDateTime.now(), className);
+        return ResponseEntity.badRequest().body(errorDetails);
+    }
+    @ExceptionHandler(OrderAccessDeniedException.class)
+    public ResponseEntity<ErrorDetails> handleOrderAccessDeniedException(Throwable e) {
+        final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
+        final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
+                List.of(e.getMessage()), LocalDateTime.now(), className);
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorDetails);
+    }
+
+    @ExceptionHandler(OrderUnsupportedStatusException.class)
+    public ResponseEntity<ErrorDetails> handleOrderUnsupportedStatusException(Throwable e) {
         final String className = Arrays.stream(e.getStackTrace()).findFirst().orElseThrow().getClassName();
         final ErrorDetails errorDetails = new ErrorDetails(e.getClass().getSimpleName(),
                 List.of(e.getMessage()), LocalDateTime.now(), className);

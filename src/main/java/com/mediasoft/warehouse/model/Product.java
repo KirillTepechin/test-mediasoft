@@ -1,5 +1,6 @@
 package com.mediasoft.warehouse.model;
 
+import com.mediasoft.warehouse.model.enums.Category;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -75,6 +76,9 @@ public class Product {
      */
     @Column(nullable = false, updatable = false)
     private LocalDate createdDate;
+
+    @Column(nullable = false)
+    private Boolean isAvailable;
 
     /**
      * Устанавливает дату создания и последнего изменения количества товара перед сохранением.

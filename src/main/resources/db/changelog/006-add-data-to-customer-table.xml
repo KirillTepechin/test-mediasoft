@@ -1,0 +1,19 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="006-add-data-to-customer-table" author="Kirill Tepechin">
+        <insert tableName="customer">
+            <column name="login" value="test_login1"/>
+            <column name="email" value="test_email1@example.com"/>
+            <column name="is_active" value="true"/>
+        </insert>
+        <insert tableName="customer">
+            <column name="login" value="test_login2"/>
+            <column name="email" value="test_email2@example.com"/>
+            <column name="is_active" value="true"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
