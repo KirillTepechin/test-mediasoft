@@ -15,11 +15,16 @@ spring:
     change-log: classpath:db/changelog/changelog.xml
     enabled: true
 app:
+  kafka:
+    enabled: true
   scheduling:
     enabled: false
     period: 20000
     percentage: 10.1
     optimization: true
+kafka:
+  bootstrapAddress: localhost:9091
+  groupId: group1
 rest:
   currency-service:
     mock:

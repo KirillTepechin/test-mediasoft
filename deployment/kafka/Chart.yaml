@@ -1,0 +1,9 @@
+apiVersion: v2
+name: warehouse-kafka
+version: 1.0.0
+description: Warehouse Kafka
+type: application
+maintainers:
+  - name: Kirill Tepechin
+    email: kir.tep18@mail.ru
+appVersion: 1.0.0
