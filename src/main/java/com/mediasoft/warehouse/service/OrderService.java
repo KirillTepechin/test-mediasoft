@@ -178,13 +178,8 @@ public class OrderService {
 
         CompletableFuture<Map<String, String>> innByLoginsFuture = crmServiceClient.getInnByLogins(logins);
 
-        Map<String, String> accountNumbersByLogins = accountNumbersByLoginsFuture.join();
-        Map<String, String> innByLogins = innByLoginsFuture.join();
-
-        List<OrderProduct> orderProducts = activeOrders.stream()
-                .flatMap(order -> order.getOrderProducts().stream()).toList();
-
-        return orderProducts.stream()
+        return activeOrders.stream()
+                .flatMap(order -> order.getOrderProducts().stream())
                 .collect(Collectors.groupingBy(
                         orderProduct -> orderProduct.getProduct().getUuid(),
                         Collectors.mapping(orderProduct -> {
@@ -192,9 +187,9 @@ public class OrderService {
                             Customer customer = order.getCustomer();
                             return new OrderInfo(order.getUuid(),
                                     new CustomerInfo(customer.getId(),
-                                            accountNumbersByLogins.get(customer.getLogin()),
+                                            accountNumbersByLoginsFuture.join().get(customer.getLogin()),
                                             customer.getEmail(),
-                                            innByLogins.get(customer.getLogin())
+                                            innByLoginsFuture.join().get(customer.getLogin())
                                     ),
                                     order.getStatus(),
                                     order.getDeliveryAddress(),
@@ -202,7 +197,6 @@ public class OrderService {
                             );
                         }, Collectors.toList())
                 ));
-
     }
 
     private void createOrderProduct(OrderProductDto product, Product productFromDb, Order order) {

@@ -1,4 +1,4 @@
-package com.mediasoft.warehouse.configuration.service_properties;
+package com.mediasoft.warehouse.properties;
 
 import lombok.Data;
 
