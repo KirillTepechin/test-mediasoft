@@ -1,4 +1,4 @@
-package com.mediasoft.warehouse.currency;
+package com.mediasoft.warehouse.integration.currency;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

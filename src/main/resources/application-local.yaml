@@ -21,3 +21,17 @@ rest:
     host: http://localhost:8081 #хост второго сервиса
     methods:
       get-currency: /api/v1/currencies #урл эндпоинта с курсами для GET запроса
+
+  account-service:
+    mock:
+      enabled: false
+    host: http://localhost:8082
+    methods:
+      get-account-num: /api/v1/account/account-num
+
+  crm-service:
+    mock:
+      enabled: false
+    host: http://localhost:8083
+    methods:
+      get-inn: /api/v1/inn

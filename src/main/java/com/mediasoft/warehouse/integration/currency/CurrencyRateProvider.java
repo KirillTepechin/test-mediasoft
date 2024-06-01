@@ -1,8 +1,8 @@
-package com.mediasoft.warehouse.currency;
+package com.mediasoft.warehouse.integration.currency;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.mediasoft.warehouse.currency.service.CurrencyServiceClient;
+import com.mediasoft.warehouse.integration.currency.service.CurrencyServiceClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

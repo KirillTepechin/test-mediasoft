@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warehouse-deployment
+  labels:
+    app: warehouse-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: warehouse-app
+  template:
+    metadata:
+      labels:
+        app: warehouse-app
+    spec:
+      containers:
+        - name: warehouse-app
+          image: kirilltepechin/warehouse:v1
+          ports:
+            - containerPort: 8080
+              name: app
+
+          startupProbe: #проба старта приложения
+            httpGet:
+              port: 8080
+              path: /customer
+            failureThreshold: 30
+            periodSeconds: 10
+          readinessProbe: #проба готовности приложения к приему трафика
+            httpGet:
+              port: 8080
+              path: /customer
+            failureThreshold: 1
+            periodSeconds: 10
+          livenessProbe: #проба жизнеспособности приложения, что оно не зависло
+            httpGet:
+              port: 8080
+              path: /customer
+            failureThreshold: 3
+            periodSeconds: 10
+
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "local"

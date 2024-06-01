@@ -1,7 +1,7 @@
 package com.mediasoft.warehouse.mapper;
 
-import com.mediasoft.warehouse.currency.CurrencyProvider;
-import com.mediasoft.warehouse.currency.CurrencyRateProvider;
+import com.mediasoft.warehouse.integration.currency.CurrencyProvider;
+import com.mediasoft.warehouse.integration.currency.CurrencyRateProvider;
 import com.mediasoft.warehouse.dto.CreateProductDto;
 import com.mediasoft.warehouse.dto.GetProductDto;
 import com.mediasoft.warehouse.dto.ProductDto;

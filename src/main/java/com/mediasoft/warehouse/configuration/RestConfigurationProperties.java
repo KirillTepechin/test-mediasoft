@@ -1,14 +1,19 @@
 package com.mediasoft.warehouse.configuration;
 
+import com.mediasoft.warehouse.properties.AccountServiceProperties;
+import com.mediasoft.warehouse.properties.CrmServiceProperties;
+import com.mediasoft.warehouse.properties.CurrencyServiceProperties;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
+@Setter
 @Configuration
 @ConfigurationProperties(prefix = "rest")
 public class RestConfigurationProperties {
-    @Setter
-    @Getter
     private CurrencyServiceProperties currencyService;
+    private AccountServiceProperties accountService;
+    private CrmServiceProperties crmService;
 }

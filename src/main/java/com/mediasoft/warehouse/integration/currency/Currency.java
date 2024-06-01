@@ -1,4 +1,4 @@
-package com.mediasoft.warehouse.currency;
+package com.mediasoft.warehouse.integration.currency;
 
 public enum Currency {
     CNY,
