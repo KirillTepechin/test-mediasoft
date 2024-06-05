@@ -1,18 +1,22 @@
 package com.mediasoft.warehouse.service;
 
+import com.mediasoft.warehouse.configuration.S3ConfigurationProperties;
 import com.mediasoft.warehouse.dto.GetProductDto;
 import com.mediasoft.warehouse.dto.ProductDto;
 import com.mediasoft.warehouse.exception.ArticleAlreadyExistsException;
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import com.mediasoft.warehouse.mapper.ProductMapper;
 import com.mediasoft.warehouse.model.Product;
+import com.mediasoft.warehouse.model.ProductImage;
+import com.mediasoft.warehouse.repository.ProductImageRepository;
 import com.mediasoft.warehouse.repository.ProductRepository;
-import com.mediasoft.warehouse.service.search.criteria.SearchCriteria;
 import com.mediasoft.warehouse.service.search.SpecificationBuilder;
+import com.mediasoft.warehouse.service.search.criteria.SearchCriteria;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,6 +33,9 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final SpecificationBuilder specificationBuilder;
+    private final S3ConfigurationProperties s3ConfigurationProperties;
+    private final ProductImageRepository productImageRepository;
+    private final S3StorageService s3StorageService;
 
     /**
      * Получить все товары.
@@ -124,6 +131,31 @@ public class ProductService {
 
         List<Product> result = productRepository.findAll(specification, pageable).getContent();
         return result.stream().map(productMapper::toGetProductDto).toList();
+    }
+
+    @Transactional
+    public UUID addImageToProduct(UUID productUuid, MultipartFile file) {
+        ProductImage productImage = new ProductImage();
+        productImage.setProduct(productRepository.findById(productUuid)
+                .orElseThrow(()-> new ProductNotFoundException(productUuid)));
+        UUID key = productImageRepository.save(productImage).getUuid();
+
+        String bucketName = s3ConfigurationProperties.getBucketName();
+
+        s3StorageService.uploadFileToBucket(bucketName, key.toString(), file);
+
+        return key;
+    }
+
+    @Transactional(readOnly = true)
+    public byte[] downloadProductImages(UUID productUuid) {
+        String bucketName = s3ConfigurationProperties.getBucketName();
+
+        List<ProductImage> productImages = productImageRepository.findAllByProductUuid(productUuid);
+        List<String> keys = productImages.stream()
+                .map(productImage -> productImage.getUuid().toString()).toList();
+
+        return s3StorageService.downloadFilesFromBucket(bucketName, keys);
     }
 
     private void checkArticle(String article){

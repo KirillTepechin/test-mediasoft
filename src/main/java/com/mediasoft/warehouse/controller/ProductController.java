@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
+
+import static org.apache.tomcat.util.http.fileupload.FileUploadBase.MULTIPART_FORM_DATA;
 
 /**
  * REST API контроллер для товаров.
@@ -90,5 +94,15 @@ public class ProductController {
     public List<GetProductDto> searchProducts(Pageable pageable,
                                            @RequestBody @Valid List<SearchCriteria<?>> searchCriteriaList) {
         return productService.searchProducts(searchCriteriaList, pageable);
+    }
+
+    @PatchMapping(value = "/{uuid}/upload", consumes = MULTIPART_FORM_DATA)
+    public UUID addImageToProduct(@PathVariable UUID uuid, @RequestParam MultipartFile file){
+        return productService.addImageToProduct(uuid, file);
+    }
+
+    @GetMapping(value = "/{uuid}/download", produces = "application/zip")
+    public byte[] downloadProductImages(@PathVariable UUID uuid){
+        return productService.downloadProductImages(uuid);
     }
 }

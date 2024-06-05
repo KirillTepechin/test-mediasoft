@@ -41,3 +41,10 @@ rest:
     host: http://localhost:8083
     methods:
       get-inn: /api/v1/inn
+s3:
+  credentials:
+    accessKey: test
+    secretKey: test
+  endpoint: http://localhost:4566
+  bucket-name: product-image-bucket
+  region: us-east-1

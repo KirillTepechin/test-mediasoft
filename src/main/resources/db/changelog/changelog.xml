@@ -10,4 +10,5 @@
     <include file="004-create-order-table.xml" relativeToChangelogFile="true"/>
     <include file="005-create-order-product-table.xml" relativeToChangelogFile="true"/>
     <include file="006-add-data-to-customer-table.xml" relativeToChangelogFile="true"/>
+    <include file="007-create-product-image-table.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
