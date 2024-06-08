@@ -51,4 +51,5 @@ public class ProductDto {
      * Дата создания.
      */
     private LocalDate createdDate;
+    private Boolean isAvailable;
 }

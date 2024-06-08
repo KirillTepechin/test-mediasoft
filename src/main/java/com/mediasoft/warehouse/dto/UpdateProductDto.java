@@ -41,4 +41,6 @@ public class UpdateProductDto {
      */
     @Positive(message = "Поле quantity должно быть положительным")
     private BigDecimal quantity;
+
+    private Boolean isAvailable;
 }

@@ -1,5 +1,5 @@
 INSERT INTO public.product(
-	uuid, name, description, category, price, quantity, last_quantity_change_date, created_date)
+	uuid, name, description, category, price, quantity, last_quantity_change_date, created_date, article, is_available)
 	VALUES (
 				random_uuid(),
 				'product1',
@@ -8,7 +8,9 @@ INSERT INTO public.product(
 				100,
 				1,
 				'2024-10-20',
-				'2024-10-20'
+				'2024-10-20',
+				'article1',
+				true
 		   ),
 		   (
 				random_uuid(),
@@ -18,7 +20,9 @@ INSERT INTO public.product(
 				200,
 				2,
 				'2024-08-20',
-				'2024-08-20'
+				'2024-08-20',
+				'article2',
+                true
 		   ),
 		   (
            		random_uuid(),
@@ -28,7 +32,9 @@ INSERT INTO public.product(
            		100,
            		2,
            		'2024-08-20',
-           		'2024-08-20'
+           		'2024-08-20',
+           		'article3',
+                true
            ),
            (
            		random_uuid(),
@@ -38,5 +44,7 @@ INSERT INTO public.product(
            		200,
            		2,
            		'2024-10-20',
-           		'2024-10-20'
+           		'2024-10-20',
+           		'article4',
+                true
            );
