@@ -3,8 +3,8 @@ package com.mediasoft.warehouse;
 import com.mediasoft.warehouse.dto.ProductDto;
 import com.mediasoft.warehouse.exception.ProductNotFoundException;
 import com.mediasoft.warehouse.mapper.ProductMapper;
-import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.model.Product;
+import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.repository.ProductRepository;
 import com.mediasoft.warehouse.service.ProductService;
 import org.junit.jupiter.api.AfterEach;
@@ -22,8 +22,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import static org.mockito.Mockito.when;
 
 /**
  * Unit тесты для слоя бизнес-логики {@link ProductService}.
