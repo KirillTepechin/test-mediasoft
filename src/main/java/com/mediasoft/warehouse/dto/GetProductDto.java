@@ -4,6 +4,7 @@ import com.mediasoft.warehouse.model.enums.Category;
 import com.mediasoft.warehouse.integration.currency.Currency;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@EqualsAndHashCode(exclude = "lastQuantityChangeDate")
 public class GetProductDto {
     /**
      * Уникальный идентификатор товара (артикул)
@@ -48,5 +50,6 @@ public class GetProductDto {
      * Дата создания.
      */
     private LocalDate createdDate;
+    private Boolean isAvailable;
     private Currency currency;
 }

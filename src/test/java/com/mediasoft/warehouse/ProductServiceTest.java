@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.mockito.Mockito.when;
+
 /**
  * Unit тесты для слоя бизнес-логики {@link ProductService}.
  */
@@ -53,8 +55,10 @@ class ProductServiceTest {
         product.setName("Товар 1");
         product.setDescription("Описание товара 1");
         product.setCategory(Category.ELECTRONICS);
-        product.setPrice(BigDecimal.valueOf(100));
-        product.setQuantity(BigDecimal.valueOf(10));
+        product.setPrice(new BigDecimal("100.00"));
+        product.setQuantity(new BigDecimal("10.00"));
+        product.setArticle("article1");
+        product.setIsAvailable(true);
 
         productList.add(productRepository.save(product));
 
@@ -63,8 +67,10 @@ class ProductServiceTest {
         product.setName("Товар 2");
         product.setDescription("Описание товара 2");
         product.setCategory(Category.FOOD);
-        product.setPrice(BigDecimal.valueOf(1000));
-        product.setQuantity(BigDecimal.valueOf(5));
+        product.setPrice(new BigDecimal("1000.00"));
+        product.setQuantity(new BigDecimal("5.00"));
+        product.setArticle("article2");
+        product.setIsAvailable(true);
 
         productList.add(productRepository.save(product));
 
@@ -84,8 +90,10 @@ class ProductServiceTest {
     @Test
     void getAllProductTest() {
         PageRequest pageRequest = PageRequest.of(0,10);
+
         var productDtoListFromDb = productService.getAllProducts(pageRequest);
-        var productDtoList = productList.stream().map(productMapper::toProductDto).toList();
+        var productDtoList = productList.stream().map(productMapper::toGetProductDto).toList();
+        Assertions.assertIterableEquals(productDtoList, productDtoListFromDb);
         Assertions.assertIterableEquals(productDtoList, productDtoListFromDb);
     }
 
@@ -94,7 +102,7 @@ class ProductServiceTest {
      */
     @Test
     void getProductByIdTest() {
-        var product = productMapper.toProductDto(productList.get(0));
+        var product = productMapper.toGetProductDto(productList.get(0));
         Assertions.assertEquals(product, productService.getProductById(product.getUuid()));
     }
 
@@ -113,16 +121,16 @@ class ProductServiceTest {
     @Test
     void createProductTest() {
         ProductDto productDto = new ProductDto();
-        productDto.setUuid(UUID.randomUUID());
         productDto.setName("Товар");
         productDto.setDescription("Описание товара");
         productDto.setCategory(Category.ELECTRONICS);
         productDto.setPrice(BigDecimal.valueOf(100.00));
         productDto.setQuantity(BigDecimal.valueOf(10));
-
+        productDto.setArticle("article10");
+        productDto.setIsAvailable(true);
         var uuid = productService.createProduct(productDto);
 
-        Assertions.assertEquals(productDto.getUuid(), productService.getProductById(uuid).getUuid());
+        Assertions.assertEquals(uuid, productService.getProductById(uuid).getUuid());
     }
 
     /**

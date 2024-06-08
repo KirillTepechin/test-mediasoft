@@ -44,7 +44,7 @@ public class ProductSearchDataJpaTest {
         Specification<Product> specification = specificationBuilder.getSpecification(searchCriteriaList);
         List<Product> actualProducts = productRepository.findAll(specification);
         Assertions.assertThat(actualProducts)
-                .anySatisfy(product -> assertEquals(expectedQuantity, product.getQuantity()))
+                .anySatisfy(product -> assertEquals(expectedQuantity, product.getQuantity().intValue()))
                 .hasSize(3);
     }
 

@@ -49,4 +49,7 @@ public class CreateProductDto {
     @NotNull(message = "Поле price не может быть null")
     @Positive(message = "Поле quantity должно быть положительным")
     private BigDecimal quantity;
+
+    @NotNull(message = "Поле is_available не может быть null")
+    private Boolean isAvailable;
 }
