@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -125,7 +126,7 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<GetProductDto> searchProducts(List<SearchCriteria<?>> searchCriteriaList, Pageable pageable) {
         var specification = specificationBuilder.getSpecification(searchCriteriaList);
 
@@ -147,15 +148,15 @@ public class ProductService {
         return key;
     }
 
-    @Transactional(readOnly = true)
-    public byte[] downloadProductImages(UUID productUuid) {
+    @Transactional
+    public void downloadProductImages(UUID productUuid, OutputStream outputStream) {
         String bucketName = s3ConfigurationProperties.getBucketName();
 
         List<ProductImage> productImages = productImageRepository.findAllByProductUuid(productUuid);
         List<String> keys = productImages.stream()
                 .map(productImage -> productImage.getUuid().toString()).toList();
 
-        return s3StorageService.downloadFilesFromBucket(bucketName, keys);
+        s3StorageService.downloadFilesFromBucket(bucketName, keys, outputStream);
     }
 
     private void checkArticle(String article){

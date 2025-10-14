@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import com.mediasoft.warehouse.service.search.criteria.SearchCriteria;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.util.List;
 import java.util.UUID;
@@ -96,13 +99,19 @@ public class ProductController {
         return productService.searchProducts(searchCriteriaList, pageable);
     }
 
-    @PatchMapping(value = "/{uuid}/upload", consumes = MULTIPART_FORM_DATA)
+    @PostMapping(value = "/{uuid}/upload", consumes = MULTIPART_FORM_DATA)
     public UUID addImageToProduct(@PathVariable UUID uuid, @RequestParam MultipartFile file){
         return productService.addImageToProduct(uuid, file);
     }
 
     @GetMapping(value = "/{uuid}/download", produces = "application/zip")
-    public byte[] downloadProductImages(@PathVariable UUID uuid){
-        return productService.downloadProductImages(uuid);
+    public ResponseEntity<StreamingResponseBody> downloadProductImages(@PathVariable UUID uuid) {
+        StreamingResponseBody streamingResponseBody = outputStream -> productService.downloadProductImages(uuid, outputStream);
+
+        String filename = "product-images-" + uuid + ".zip";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .body(streamingResponseBody);
     }
 }
