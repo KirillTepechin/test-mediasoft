@@ -1,0 +1,24 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="modify-product-table" author="Kirill Tepechin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="product" columnName="article"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="product">
+            <column name="article" type="varchar(255)">
+                <constraints unique="true"/>
+            </column>
+        </addColumn>
+        <sql>UPDATE product SET article = CONCAT('ART-', SUBSTRING(MD5(random()::text), 1, 8)) WHERE article IS NULL</sql>
+        <addNotNullConstraint columnName="article" tableName="product"/>
+        <modifyDataType tableName="product" columnName="quantity" newDataType="NUMERIC(10,2)"/>
+        <modifyDataType tableName="product" columnName="created_date" newDataType="DATE"/>
+    </changeSet>
+
+</databaseChangeLog>

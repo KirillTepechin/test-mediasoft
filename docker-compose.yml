@@ -1,0 +1,22 @@
+version: '3'
+services:
+  backend:
+    build:
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: build/libs/*.jar
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/warehouse
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=test
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: warehouse
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: test

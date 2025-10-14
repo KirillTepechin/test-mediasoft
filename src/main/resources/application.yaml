@@ -1,0 +1,48 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/warehouse
+    username: postgres
+    password: ${PWD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+    hibernate:
+      ddl-auto: validate
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
+    enabled: true
+app:
+  kafka:
+    enabled: true
+  scheduling:
+    enabled: false
+    period: 20000
+    percentage: 10.1
+    optimization: true
+kafka:
+  bootstrapAddress: localhost:9091
+  groupId: group1
+rest:
+  currency-service:
+    mock:
+      enabled: false
+    host: http://localhost:8081 #хост второго сервиса
+    methods:
+      get-currency: /api/v1/currencies #урл эндпоинта с курсами для GET запроса
+
+  account-service:
+    mock:
+      enabled: false
+    host: http://localhost:8082
+    methods:
+      get-account-num: /api/v1/account/account-num
+
+  crm-service:
+    mock:
+      enabled: false
+    host: http://localhost:8083
+    methods:
+      get-inn: /api/v1/inn

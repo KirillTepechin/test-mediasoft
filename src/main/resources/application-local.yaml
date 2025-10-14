@@ -1,0 +1,37 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:warehouse
+    driver-class-name: org.h2.Driver
+    username: username
+    password: ${PWD}
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+  h2:
+    console:
+      enabled: true
+  liquibase:
+    change-log: classpath:db/changelog/changelog.xml
+    enabled: false
+rest:
+  currency-service:
+    mock:
+      enabled: false
+    host: http://localhost:8081 #хост второго сервиса
+    methods:
+      get-currency: /api/v1/currencies #урл эндпоинта с курсами для GET запроса
+
+  account-service:
+    mock:
+      enabled: false
+    host: http://localhost:8082
+    methods:
+      get-account-num: /api/v1/account/account-num
+
+  crm-service:
+    mock:
+      enabled: false
+    host: http://localhost:8083
+    methods:
+      get-inn: /api/v1/inn
