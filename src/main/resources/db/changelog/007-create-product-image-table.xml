@@ -1,0 +1,23 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="007-create-product-image-table" author="Kirill Tepechin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="product_image"/>
+            </not>
+        </preConditions>
+        <createTable tableName="product_image">
+            <column name="uuid" type="uuid">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="product_uuid" type="uuid">
+                <constraints nullable="false" references="product(uuid)" foreignKeyName="fk_pi_product"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
